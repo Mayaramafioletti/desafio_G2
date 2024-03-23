@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" />
+</head>
+
+
+<body>
+    <div id="cadastro">
+        <h1 aria-label="Cadastre CPF ou CNPJ">Cadastre CPF ou CNPJ</h1>
+        <input class="input" id="toggle" type="checkbox">
+        <label  class="label" for="toggle">
+            <div class="left">CPF</div>
+            <div class="switch">
+                <span  class="slider round"></span>
+            </div>
+            <div class="right">CNPJ</div>
+        </label>
+        <ul id="cpfTips">
+            <li>CPF precisa ter 11 digítos</li>
+            <li>Colocar somente números</li>
+        </ul>
+        <ul id="cnpjTips">
+            <li>CNPJ precisa ter 14 digítos</li>
+            <li>Colocar somente números</li>
+        </ul>
+        <form action="" onsubmit="addRow(event)">
+            <input aria-label="Coloque seu CPF ou CNPJ" type="text" placeholder="CPF"
+                name="identificador de cpf ou cnpj" id="identificador"
+                pattern="(\d{3}\.?\d{3}\.?\d{3}-?\d{2})"
+                title="Digite um CPF ou CNPJ válido" required oninput="formatIdentifier(this)" />
+            <button>Cadastrar</button>
+        </form>
+
+    </div>
+    <table class="tabela" id="tabela">
+        <tr>
+            <th>CPF ou CNPJ</th>
+            <th>Ações</th>
+        </tr>
+        </thead>
+    </table>
+
+
+    <script src="index.js"></script>
+</body>
+
+</html>
