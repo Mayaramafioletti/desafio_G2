@@ -1,50 +1,65 @@
-document.getElementById("cnpjTips").classList.add("hidden");
-document.getElementById('identificador').setAttribute('maxlength',14);
-document
-  .getElementById("identificador")
-  .setAttribute("onkeypress", "return limitMe(event,this)");
-  function limitMe(evt, txt) {
-    if (evt.which && evt.which == 8) return true;
-    else return (txt.value.length < +txt.maxlength);
-}
+let isCpf = true;
+
+document.addEventListener("DOMContentLoaded", () => {
+  let identificador = document.getElementById("identificador");
+
+  identificador.setAttribute("maxlength", 14);
+  identificador.setAttribute("pattern", "(\\d{3}\\.?\\d{3}\\.?\\d{3}-?\\d{2})");
+
+  document.getElementById("cnpjTips").classList.add("hidden");
+});
+
+document.getElementById("toggle").addEventListener("change", function () {
+  let input = document.getElementById("identificador");
+  if (this.checked) {
+    isCpf = false;
+    input.placeholder = "CNPJ";
+
+    input.setAttribute(
+      "pattern",
+      "(\\d{2}\\.?\\d{3}\\.?\\d{3}/?\\d{4}-?\\d{2})"
+    );
+    input.setAttribute("maxlength", 18);
+
+    document.getElementById("cpfTips").classList.add("hidden");
+    document.getElementById("cnpjTips").classList.remove("hidden");
+  } else {
+    isCpf = true;
+    input.placeholder = "CPF";
+
+    input.setAttribute("pattern", "(\\d{3}.?\\d{3}\\.?\\d{3}-?\\d{2})");
+    input.setAttribute("maxlength", 14);
+
+    document.getElementById("cpfTips").classList.remove("hidden");
+    document.getElementById("cnpjTips").classList.add("hidden");
+  }
+
+  formatIdentifier(input);
+  input.focus();
+});
 
 function formatIdentifier(input) {
   let v = input.value;
   v = v.replace(/\D/g, "");
 
-  if (v.length <= 11) {
+  if (v.length <= 11 && isCpf) {
     v = v.replace(/(\d{3})(\d)/, "$1.$2");
     v = v.replace(/(\d{3})(\d)/, "$1.$2");
     v = v.replace(/(\d{3})(\d{1,2})$/, "$1-$2");
-  } else if (v.length <= 14) {
+  } else if (!isCpf) {
     v = v.replace(/(\d{2})(\d)/, "$1.$2");
     v = v.replace(/(\d{3})(\d)/, "$1.$2");
     v = v.replace(/(\d{3})(\d)/, "$1/$2");
     v = v.replace(/(\d{4})(\d)/, "$1-$2");
   } else {
-    input.value = v.slice(0, 14);
-    return;
+    input.value = v.slice(0, 11);
+
+    return formatIdentifier(input);
   }
 
   input.value = v;
 }
-document.getElementById("toggle").addEventListener("change", function () {
-  let input = document.getElementById("identificador");
-  if (this.checked) {
-    input.placeholder = "CNPJ";
-    input.pattern = `(\d{2}\.?\d{3}\.?\d{3}/?\d{4}-?\d{2})`;
-    input.maxlength = "18";
-    document.getElementById("cpfTips").classList.add("hidden");
-    document.getElementById("cnpjTips").classList.remove("hidden");
-  } else {
-    input.placeholder = "CPF";
-    input.pattern = `(\d{3}\.?\d{3}\.?\d{3}-?\d{2})`;
-    input.maxlength = "14";
-    document.getElementById("cpfTips").classList.remove("hidden");
-    document.getElementById("cnpjTips").classList.add("hidden");
-  }
-  input.focus();
-});
+
 
 function deleteRow(row) {
   let i = row.parentNode.parentNode.rowIndex;
@@ -73,14 +88,15 @@ function validateRow(input, table) {
       break;
     }
   }
+  if(result) return result;
   let validatecnpj = input.value.replace(/[^\d]+/g, "");
   console.log(validatecnpj.length);
 
   if (validatecnpj.length === 14) {
-    result = !CnpjValido(validatecnpj);
+    result = !cnpjValido(validatecnpj);
     if (result) alert("CNPJ não existe");
   } else {
-    result = !CpfValido(validatecnpj);
+    result = !cpfValido(validatecnpj);
     if (result) alert("CPF não existe");
   }
 
@@ -91,7 +107,7 @@ function clearInputs() {
   document.getElementById("identificador").value = "";
 }
 
-function CnpjValido(cnpj) {
+function cnpjValido(cnpj) {
   cnpj = cnpj.replace(/[^\d]+/g, "");
   if (cnpj == "00000000000000") return false;
 
@@ -121,9 +137,9 @@ function CnpjValido(cnpj) {
 
   return true;
 }
-function CpfValido(strCPF) {
-  var Soma;
-  var Resto;
+function cpfValido(strCPF) {
+  let Soma;
+  let Resto;
   Soma = 0;
   if (strCPF == "00000000000") return false;
 
